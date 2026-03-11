@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Validador de Cédula JCE Dominicana</title>
+
+<style>
+
+body{
+    font-family:sans-serif;
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+    align-items:center;
+    padding-top:50px;
+    background-color:#f4f4f9;
+}
+
+.card{
+    background:white;
+    padding:2rem;
+    border-radius:8px;
+    box-shadow:0 4px 6px rgba(0,0,0,0.1);
+    width:350px;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+    border:1px solid #ccc;
+    border-radius:4px;
+    box-sizing:border-box;
+    font-size:1.1rem;
+}
+
+button{
+    width:100%;
+    padding:10px;
+    background-color:#003366;
+    color:white;
+    border:none;
+    border-radius:4px;
+    cursor:pointer;
+    font-size:1rem;
+}
+
+button:hover{
+    background-color:#004488;
+}
+
+#resultado{
+    margin-top:20px;
+    font-weight:bold;
+    text-align:center;
+    padding:10px;
+    border-radius:4px;
+}
+
+.correcto{
+    background-color:#d4edda;
+    color:#059326;
+    border:1px solid #c3e6cb;
+}
+
+.incorrecto{
+    background-color:#f8d7da;
+    color:#960413;
+    border:1px solid #f5c6cb;
+}
+
+
+footer{
+    margin-top:auto;
+    text-align:center;
+    padding:20px;
+    font-size:0.9rem;
+    color:#555;
+}
+
+footer span{
+    font-weight:bold;
+    color:#003366;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Validador JCE RD</h2>
+
+<p>Introduce el número de cédula:</p>
+
+<input type="text" id="cedulaInput" placeholder="402-0000000-0" maxlength="13">
+
+<button onclick="procesarValidacion()">Verificar Cédula</button>
+
+<div id="resultado"></div>
+
+</div>
+
+<script>
+
+function procesarValidacion(){
+
+const input = document.getElementById('cedulaInput').value;
+
+// Limpiamos el texto eliminando guiones y espacios
+const cedula = input.replace(/-/g,"").trim();
+
+// Validamos longitud
+if(cedula.length !== 11 || isNaN(cedula)){
+mostrarResultado("CÉDULA ES INCORRECTA",false);
+return;
+}
+
+// Algoritmo de Luhn
+let suma = 0;
+
+const verificadorOriginal = parseInt(cedula.charAt(10));
+
+for(let i=0;i<10;i++){
+
+let digito = parseInt(cedula.charAt(i));
+
+let peso = (i % 2 !== 0) ? digito * 2 : digito * 1;
+
+if(peso >= 10){
+
+// se separan los dígitos y se suman
+peso = Math.floor(peso/10) + (peso % 10);
+
+}
+
+suma += peso;
+
+}
+
+let residuo = suma % 10;
+
+let digitoEsperado = (residuo === 0) ? 0 : 10 - residuo;
+
+// Comparación final
+if(digitoEsperado === verificadorOriginal){
+
+mostrarResultado("CÉDULA ES CORRECTA",true);
+
+}else{
+
+mostrarResultado("CÉDULA ES INCORRECTA",false);
+
+}
+
+}
+
+function mostrarResultado(mensaje,esValido){
+
+const div = document.getElementById("resultado");
+
+div.innerText = mensaje;
+
+div.className = esValido ? "correcto" : "incorrecto";
+
+}
+
+</script>
+
+<footer>
+<p>© 2026 <span>Validador JCE RD</span> | Abimael Perez Hernandez</p>
+</footer>
+
+</body>
+</html>
